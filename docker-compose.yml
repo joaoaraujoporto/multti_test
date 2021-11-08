@@ -1,0 +1,50 @@
+version: '3.8'
+services:
+  multti-app:
+    image: multti-app
+    build:
+      context: ./dockerfiles
+      dockerfile: dockerfile-app
+    container_name: multti-app
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+    ports:
+      - 80:80
+      - 8000:8000
+    restart: always
+    env_file:
+      - .env
+    networks:
+      multti-net:
+        ipv4_address: 172.20.0.2
+  multti-db:
+    image: multti-db
+    build:
+      context: ./dockerfiles
+      dockerfile: dockerfile-db
+    container_name: multti-db
+    volumes:
+      - multti-data:/var/lib/postgresql/data
+    ports:
+      - ${POSTGRES_HOST_PORT}:5432
+    env_file:
+      - .env
+    networks:
+      multti-net:
+        ipv4_address: 172.20.0.3
+        aliases:
+          - ${POSTGRES_HOST}
+    restart: always
+
+volumes:
+  multti-data:
+
+networks:
+  multti-net:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+      - subnet: 172.20.0.0/16
+        gateway: 172.20.0.1

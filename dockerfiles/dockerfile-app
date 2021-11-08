@@ -1,0 +1,58 @@
+# Author: João Porto
+
+# Base image
+FROM php:8.0.10-apache
+
+# Use the default development configuration
+RUN mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"
+
+# Install system packages for PHP extensions recommended for Lumen
+COPY --from=mlocati/php-extension-installer:1.2.63 /usr/bin/install-php-extensions /usr/local/bin/
+RUN install-php-extensions \
+        openssl \
+        pdo \
+        pdo_pgsql \
+        mbstring \
+        xdebug
+
+# Disable xdebug by default (see PHP_ENABLE_XDEBUG)
+RUN rm /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+
+# Environment settings
+ENV COMPOSER_ALLOW_SUPERUSER=1 \
+    PHP_USER_ID=33 \
+    PHP_ENABLE_XDEBUG=0 \
+    PATH=/app:/app/vendor/bin:/root/.composer/vendor/bin:$PATH \
+    TERM=linux
+
+# Add configuration files
+COPY image-files/ /
+
+# Add GITHUB_API_TOKEN support for composer
+RUN chmod 755 \
+        /usr/local/bin/docker-php-entrypoint \
+        /usr/local/bin/composer
+
+# Install composer
+RUN curl -sS https://getcomposer.org/installer | php -- \
+        --version=2.1.5 \
+        --filename=composer.phar \
+        --install-dir=/usr/local/bin && \
+    composer clear-cache
+
+# Install packages for composer update
+RUN apt-get update
+RUN apt-get install -y \
+        git \
+        unzip
+
+# Enable mod_rewrite for images with apache
+RUN if command -v a2enmod >/dev/null 2>&1; then \
+        a2enmod rewrite headers \
+    ;fi
+
+# Exposing web ports
+EXPOSE 80 443
+
+# Application environment
+WORKDIR /var/www/html/

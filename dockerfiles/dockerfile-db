@@ -1,0 +1,4 @@
+# Author: João Porto
+
+# Base image
+FROM postgres:13.4
