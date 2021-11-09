@@ -1,24 +1,27 @@
-# Lumen PHP Framework
+##### Este repositório contém a solução ao teste proposto para avaliar as habilidades práticas do candidato João Porto à vaga de Desenvolvedor(a) Back-end na Multti.
 
-[![Build Status](https://travis-ci.org/laravel/lumen-framework.svg)](https://travis-ci.org/laravel/lumen-framework)
-[![Total Downloads](https://img.shields.io/packagist/dt/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![Latest Stable Version](https://img.shields.io/packagist/v/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
-[![License](https://img.shields.io/packagist/l/laravel/framework)](https://packagist.org/packages/laravel/lumen-framework)
+## Sumário
+1. [Configuração do ambiente de execução](#configuração-do-ambiente-de-execução)
+1. [Uso da API](#uso-da-api)
 
-Laravel Lumen is a stunningly fast PHP micro-framework for building web applications with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Lumen attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as routing, database abstraction, queueing, and caching.
+## Configuração do ambiente de execução
 
-## Official Documentation
+Para executar a API presente neste repositório utilizando um container Docker basta ter o docker-compose instalado e executar, a partir da pasta raiz do repositório, o seguinte comando:
 
-Documentation for the framework can be found on the [Lumen website](https://lumen.laravel.com/docs).
+    $ docker-compose up -d
 
-## Contributing
+Com isso o container será criado e sua linha de comando pode ser acessada com o comando:
 
-Thank you for considering contributing to Lumen! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+    $ docker exec -it <container_id_app> bash
 
-## Security Vulnerabilities
+O comando docker-compose também criará um container com um servidor PostgreSQL que pode ser acessado via linha de comando de forma semelhante:
 
-If you discover a security vulnerability within Lumen, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+    $ docker exec -it <container_id_db> bash
 
-## License
+Após acessar a linha de comando do container da API, execute o seguinte comando para criar as tabelas da API no banco de dados
 
-The Lumen framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+    $ php ./artisan migrate
+
+## Uso da API
+
+Veja [aqui a documentação da API](https://documenter.getpostman.com/view/15577728/UVC5F87A) para informações de como usá-la.

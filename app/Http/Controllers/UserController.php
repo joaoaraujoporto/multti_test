@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -32,7 +33,9 @@ class UserController extends Controller
         $this->validate_store($request);
 
         try {
-            User::create($request->all());
+            $requestData = $request->all();
+            $requestData['password'] = Hash::make($request->password);
+            User::create($requestData);
             return response()->json('User was created succesfully', 201);
         } catch (\Exception $e) {
             return response()->json('User could not be created, please try again later', 500);
@@ -48,8 +51,11 @@ class UserController extends Controller
 
         $this->validate_update($request);
 
+        $requestData = $request->all();
+        $requestData['password'] = Hash::make($request->password);
+
         try {
-            $user->fill($request->all())->save();
+            $user->fill($requestData)->save();
             return response()->json('User was updated succesfully', 201);
         } catch (\Exception $e) {
             return response()->json('User could not be updated, please try again later', 500);
